@@ -66,7 +66,7 @@ blast2profile.py -r CP016861.fna -f fasta -b VF_saureus_edit.fa -g gbk/*gbff -m 
 blast2profile.py -r CP016861.fna -f fasta -b VF_saureus_edit.fa -g gbk/*gbff -m saureus -id -c 95
 ```
 
-![plot](example/images/images/profile_identity.svg)
+![plot](example/images/profile_identity.svg)
 
 
 
@@ -96,7 +96,7 @@ VFG001327_selk	CP013959
 blast2profile.py -r CP016861.fna -f fasta -b VF_saureus_edit.fa -m saureus -c 95 -a labels.tab -n -l -s -bf highlight.tab -id
 ```
 
-![plot](example/images/images/profile_highlight.svg)
+![plot](example/images/profile_highlight.svg)
 
 
 
