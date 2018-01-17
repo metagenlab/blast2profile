@@ -28,7 +28,7 @@ conda install -c bioconda blast
 - *-c* identity cutoff (aa)
 - *-a* label mapping file (for the phylogeny)
 
-- fasta file should contain a single sequence (multiple contigs can be concatenated into a single one)
+- fasta file should contain a single sequence (multiple contigs should be concatenated into a single sequence)
 - the label mapping file should have the following structure: fasta_header	label
 
 ```
