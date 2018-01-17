@@ -21,7 +21,7 @@ conda install -c bioconda blast
 # simple plot
 
 - *-r* reference genome
-- *-f* directory containing target fasta files. Fasta files should contain a single sequence and have LOCUS as header corresponding to the provided gbk file (see example files).
+- *-f* directory containing target fasta files. Fasta files should contain a single sequence. The fasta header should match the label file (parameter *-a*) or one LOCUS of one gbk file (parameter *-g*).
 - *-b* fasta file to blast. Fasta entry headers are used as comlum labels (see example below).
 - *-m* mlst sheme (see tseeman mlst)
 - *-id* do not show identity values (only color scale)
