@@ -75,7 +75,7 @@ blast2profile.py -r CP016861.fna -f fasta -b VF_saureus_edit.fa -g gbk/*gbff -m 
 # highlight some cells with different colors
 
 - specific cells can be highlighted if a filter is provided. The structure of the filter should be as follow: protein_name genome_accession. It sould match the header of the fasta files.
-
+- cells are only colored if a significat tBLASTn hit is found in the corresponding sequence
 
 ```
 VFG001273_hlgA	CP016858
