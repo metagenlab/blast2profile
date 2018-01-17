@@ -47,6 +47,7 @@ def plot_blast_result(tree_file,
                       id2description,
                       id2mlst,check_overlap,
                       ordered_queries,
+                      fasta_file2accession,
                       id_cutoff=80,
                       reference_accession='-',
                       accession2hit_filter=False,
@@ -66,11 +67,7 @@ def plot_blast_result(tree_file,
     import blast_utils
     blast2data, queries = blast_utils.remove_blast_redundancy(blast_result_file_list, check_overlap)
 
-    print 'blast dico ok, delete columns with no matches'
     queries_count = {}
-    print
-    print '-----blast_result_file_list---', blast_result_file_list
-    print
 
     for query in queries:
         queries_count[query] = 0
@@ -81,7 +78,7 @@ def plot_blast_result(tree_file,
                     queries_count[query]+=1
                 else:
                     del blast2data[one_blast][query]
-    print 'query counts', len(queries_count)
+
     print queries_count
     for query in queries:
         print "Hit counts: %s\t%s" % (query, queries_count[query])
@@ -115,7 +112,8 @@ def plot_blast_result(tree_file,
         hit_count = 0
         for lf2 in t1.iter_leaves():
             try:
-                tmpidentity = blast2data[lf2.name][query][0]
+                accession = fasta_file2accession[lf2.name]
+                tmpidentity = blast2data[accession][query][0]
                 if float(tmpidentity)>float(id_cutoff):
                     hit_count+=1
             except:
@@ -131,7 +129,7 @@ def plot_blast_result(tree_file,
         #lf.add_face(AttrFace("name", fsize=20), 0, position="branch-right")
         lf.branch_vertical_margin = 0
         #data = [random.randint(0,2) for x in xrange(3)]
-
+        accession = fasta_file2accession[lf.name]
         for col, value in enumerate(ordered_queries_filtered):
 
             if head:
@@ -164,8 +162,7 @@ def plot_blast_result(tree_file,
                     #lf.add_face(n, col, position="aligned")
                     tss.aligned_header.add_face(n, col)
             try:
-
-                identity_value = blast2data[lf.name][value][0]
+                identity_value = blast2data[accession][value][0]
                 #print 'identity', lf.name, value, identity_value
 
                 if lf.name != reference_accession:
@@ -174,17 +171,15 @@ def plot_blast_result(tree_file,
                         color = rgb2hex(m_blue.to_rgba(float(identity_value)))
                     else:
                         # if filter, color hits that are not in the filter in green
-                        if lf.name in accession2hit_filter:
-		            if value in accession2hit_filter[lf.name]:
-		                print 'match!'
+                        
+                        if accession in accession2hit_filter:
+		            if value in accession2hit_filter[accession]:
                                 # mred
 		                color = rgb2hex(m_green.to_rgba(float(identity_value)))
 
 		            else:
-		                print 'no match!'
 		                color = rgb2hex(m_blue.to_rgba(float(identity_value)))
                         else:
-		            print 'no match!'
 		            color = rgb2hex(m_blue.to_rgba(float(identity_value)))				
                 else:
                     # reference taxon, blue scale
@@ -195,7 +190,6 @@ def plot_blast_result(tree_file,
             except:
                 identity_value = 0
                 color = "white"
-            #print id_cutoff, float(identity_value)
             if show_identity_values:
                 if float(identity_value) >= float(id_cutoff):
 
@@ -212,8 +206,6 @@ def plot_blast_result(tree_file,
 
                     n.opacity = 1.
                 else:
-                    #print 'identity not ok', lf.name, identity_value, value
-                    #print blast2data[lf.name]
                     identity_value = '-'
                     n = TextFace(' %s ' % str(identity_value))
                     n.opacity = 1.
@@ -241,8 +233,10 @@ def plot_blast_result(tree_file,
 
 
         try:
-            lf.name = ' %s (%s)' % (id2description[lf.name], id2mlst[lf.name])
+            accession = fasta_file2accession[lf.name]
+            lf.name = ' %s (%s)' % (id2description[accession], id2mlst[lf.name])
         except KeyError:
+            print '--------', id2description
             lf.name = ' %s (%s)' % (lf.name, id2mlst[lf.name])
         head = False
 
@@ -263,9 +257,6 @@ def plot_blast_result(tree_file,
 
     print 'rendering tree'
     t1.render("profile.svg", dpi=1000, h=400, tree_style=tss)
-
-    #print blast2data
-    #print blast_result_file_list
 
 
 def get_accession_filter_from_blast_list(tab_blast_results, identity_cutoff=80):
@@ -307,6 +298,7 @@ def main(input_reference,
 
     import shell_command
     import os
+    
     import sys
     import glob
     from Bio import SeqIO
@@ -336,6 +328,7 @@ def main(input_reference,
         if len(fasta_files) == 0:
             raise ('could not find fasta files')
     #print 'fasta files', fasta_files
+
 
     reference_phylogeny_folder = os.path.join(wd, 'reference_parsnp_phylogeny')
     reference_phylogeny = os.path.join(reference_phylogeny_folder, 'parsnp_edit.tree')
@@ -393,8 +386,15 @@ def main(input_reference,
         os.mkdir(blastp_folder)
     os.chdir(input_queries_folder)
 
+
+    fasta_file_name2fasta_header = {}
+
     blast_best_hit_results = []
     for genome_file in fasta_files:
+        file_name = os.path.basename(genome_file).split('.')[0]
+        header_name = SeqIO.read(genome_file, 'fasta').name
+        fasta_file_name2fasta_header[file_name] = header_name
+
         out_file = 'blast_'+ os.path.basename(genome_file).split('.')[0]
         outpath = os.path.join(blastp_folder, out_file + '.tab')
         best_hit_path = os.path.join(blastp_folder, 'uniq_' + out_file + '.tab')
@@ -439,7 +439,8 @@ def main(input_reference,
                     best_hit_handle.write(line)
             best_hit_handle.close()
     os.chdir(wd)
-
+    
+    print fasta_file_name2fasta_header
 
     if accession2description:
         id2description = {}
@@ -462,6 +463,7 @@ def main(input_reference,
                       accession2st_type,
                       check_overlap,
                       ordered_queries,
+                      fasta_file_name2fasta_header,
                       id_cutoff,
                       reference_accession=reference_accession,
                       accession2hit_filter=accession2hit_filter,

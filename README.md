@@ -7,6 +7,11 @@ Used to investigate the conservation of virulence factors in *S. aureus* complet
 If multiple BLAST hits are colocalised (overlap between the coordinates of two hits), only the hit with the highest identity is retained.
 The phylogeny is build with *parsnp*. The figure made with the ete2 package.
 
+# TODO
+
+- change mapping procedure for mlst (extract fasta header and map file name to fasta header)
+- change mapping procedure for parsnp (extract fasta header and map file name to fasta header)
+
 # installation
 
 
@@ -47,6 +52,8 @@ LT699704	genome 9
 blast2profile.py -r CP016861.fna -f fasta -b VF_saureus_edit.fa -m saureus -id -c 95 -a labels.tab
 
 ```
+
+- the numbers in parenthesis are the ST type identified with *mlst*.
 
 ![plot](example/images/profile_labels.svg)
 
