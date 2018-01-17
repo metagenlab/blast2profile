@@ -70,7 +70,7 @@ blast2profile.py -r CP016861.fna -f fasta -b VF_saureus_edit.fa -g gbk/*gbff -m 
 
 
 
-# highlight some columns with different colors
+# highlight some cells with different colors
 
 - specific cells can be highlighted if a filter is provided. The structure of the filter should be as follow: protein_name genome_accession. It sould match the header of the fasta files.
 
