@@ -7,11 +7,6 @@ Used to investigate the conservation of virulence factors in *S. aureus* complet
 If multiple BLAST hits are colocalised (overlap between the coordinates of two hits), only the hit with the highest identity is retained.
 The phylogeny is build with *parsnp*. The figure made with the ete2 package.
 
-# TODO
-
-- change mapping procedure for mlst (extract fasta header and map file name to fasta header)
-- change mapping procedure for parsnp (extract fasta header and map file name to fasta header)
-
 # installation
 
 
